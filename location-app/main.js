@@ -1,5 +1,7 @@
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
+import OpacityControl from "maplibre-gl-opacity";
+import "maplibre-gl-opacity/dist/maplibre-gl-opacity.css";
 
 const map = new maplibregl.Map({
     container: "map",
@@ -97,37 +99,57 @@ const map = new maplibregl.Map({
                 source: "hazard_flood",
                 type: "raster",
                 paint: { "raster-opacity": 0.7 },
+                layout: { visibility: "none" },
             },
             {
                 id: "hazard_hightide-layer",
                 source: "hazard_hightide",
                 type: "raster",
                 paint: { "raster-opacity": 0.7 },
+                layout: { visibility: "none" },
             },
             {
                 id: "hazard_tsunami-layer",
                 source: "hazard_tsunami",
                 type: "raster",
                 paint: { "raster-opacity": 0.7 },
+                layout: { visibility: "none" },
             },
             {
                 id: "hazard_doseki-layer",
                 source: "hazard_doseki",
                 type: "raster",
                 paint: { "raster-opacity": 0.7 },
+                layout: { visibility: "none" },
             },
             {
                 id: "hazard_kyukeisha-layer",
                 source: "hazard_kyukeisha",
                 type: "raster",
                 paint: { "raster-opacity": 0.7 },
+                layout: { visibility: "none" },
             },
             {
                 id: "hazard_jisuberi-layer",
                 source: "hazard_jisuberi",
                 type: "raster",
                 paint: { "raster-opacity": 0.7 },
+                layout: { visibility: "none" },
             },
         ],
     },
+});
+
+map.on("load", () => {
+    const opacity = new OpacityControl({
+        baseLayers: {
+            "hazard_flood-layer": "洪水浸水想定区域",
+            "hazard_hightide-layer": "高潮浸水想定区域",
+            "hazard_tsunami-layer": "津波浸水想定区域",
+            "hazard_doseki-layer": "土石流警戒区域",
+            "hazard_kyukeisha-layer": "急傾斜警戒区域",
+            "hazard_jisuberi-layer": "地滑り警戒区域",
+        },
+    });
+    map.addControl(opacity, "top-left");
 });
