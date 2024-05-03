@@ -119,6 +119,19 @@ const map = new maplibregl.Map({
                     features: [],
                 },
             },
+            population: {
+                type: "vector",
+                tiles: [
+                    `${location.href.replace(
+                        "/index.html",
+                        ""
+                    )}/population/{z}/{x}/{y}.pbf`,
+                ],
+                minzoom: 5,
+                maxzoom: 8,
+                attribution:
+                    '<a href="https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-A16-v2_3.html" target="_blank">国土数値情報（平成27年人口集中地区データ）（国土交通省）</a>',
+            },
         },
         layers: [
             {
@@ -172,6 +185,30 @@ const map = new maplibregl.Map({
                 source: "hazard_jisuberi",
                 type: "raster",
                 paint: { "raster-opacity": 0.7 },
+                layout: { visibility: "none" },
+            },
+            {
+                id: "population-layer",
+                source: "population",
+                "source-layer": "population",
+                type: "fill",
+                paint: {
+                    "fill-color": [
+                        "rgba",
+                        255,
+                        0,
+                        0,
+                        [
+                            "min",
+                            1,
+                            [
+                                "/",
+                                ["/", ["get", "人口"], ["get", "面積"]],
+                                40000,
+                            ],
+                        ],
+                    ],
+                },
                 layout: { visibility: "none" },
             },
             {
@@ -392,6 +429,7 @@ map.on("load", () => {
         "bottom-right"
     );
 
+    // レイヤコントロール
     const opacity = new OpacityControl({
         baseLayers: {
             "osm-layer": "OpenStreetMap",
@@ -399,6 +437,7 @@ map.on("load", () => {
         },
         overLayers: {
             hillshade: "陰影図",
+            "population-layer": "人口集中地区",
             "hazard_flood-layer": "洪水浸水想定区域",
             "hazard_hightide-layer": "高潮浸水想定区域",
             "hazard_tsunami-layer": "津波浸水想定区域",
