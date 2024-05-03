@@ -955,25 +955,25 @@ map.on("load", () => {
     map.addControl(opacity, "top-left");
 
     // 指定緊急避難場所のレイヤコントロール追加
-    const opacitySkhb = new OpacityControl({
-        overLayers: {
-            "hazard_flood-layer": "洪水浸水想定区域",
-            "hazard_hightide-layer": "高潮浸水想定区域",
-            "hazard_tsunami-layer": "津波浸水想定区域",
-            "hazard_doseki-layer": "土石流警戒区域",
-            "hazard_kyukeisha-layer": "急傾斜警戒区域",
-            "hazard_jisuberi-layer": "地滑り警戒区域",
-            "skhb-1-layer": "洪水",
-            "skhb-2-layer": "崖崩れ/土石流/地滑り",
-            "skhb-3-layer": "高潮",
-            "skhb-4-layer": "地震",
-            "skhb-5-layer": "津波",
-            "skhb-6-layer": "大規模な火事",
-            "skhb-7-layer": "内水氾濫",
-            "skhb-8-layer": "火山現象",
-        },
-    });
-    map.addControl(opacitySkhb, "top-right");
+    // const opacitySkhb = new OpacityControl({
+    //     overLayers: {
+    //         "hazard_flood-layer": "洪水浸水想定区域",
+    //         "hazard_hightide-layer": "高潮浸水想定区域",
+    //         "hazard_tsunami-layer": "津波浸水想定区域",
+    //         "hazard_doseki-layer": "土石流警戒区域",
+    //         "hazard_kyukeisha-layer": "急傾斜警戒区域",
+    //         "hazard_jisuberi-layer": "地滑り警戒区域",
+    //         "skhb-1-layer": "洪水",
+    //         "skhb-2-layer": "崖崩れ/土石流/地滑り",
+    //         "skhb-3-layer": "高潮",
+    //         "skhb-4-layer": "地震",
+    //         "skhb-5-layer": "津波",
+    //         "skhb-6-layer": "大規模な火事",
+    //         "skhb-7-layer": "内水氾濫",
+    //         "skhb-8-layer": "火山現象",
+    //     },
+    // });
+    // map.addControl(opacitySkhb, "top-right");
 
     // 指定緊急避難場所のポップアップ表示
     map.on("click", (e) => {
