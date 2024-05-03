@@ -33,6 +33,26 @@ const map = new maplibregl.Map({
                 attribution:
                     '<a href="https://maps.gsi.go.jp/development/ichiran.html">地理院タイル</a>',
             },
+            gsi_pale: {
+                type: "raster",
+                tiles: [
+                    "https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png",
+                ],
+                maxzoom: 18,
+                tileSize: 256,
+                attribution:
+                    '<a href="https://maps.gsi.go.jp/development/ichiran.html">地理院タイル</a>',
+            },
+            gsi_blank: {
+                type: "raster",
+                tiles: [
+                    "https://cyberjapandata.gsi.go.jp/xyz/blank/{z}/{x}/{y}.png",
+                ],
+                maxzoom: 18,
+                tileSize: 256,
+                attribution:
+                    '<a href="https://maps.gsi.go.jp/development/ichiran.html">地理院タイル</a>',
+            },
             hazard_flood: {
                 type: "raster",
                 tiles: [
@@ -145,6 +165,19 @@ const map = new maplibregl.Map({
                 attribution:
                     '<a href="https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-v3_0.html" target="_blank">国土数値情報（令和3年行政区域データ）（国土交通省）</a>',
             },
+            rail: {
+                type: "vector",
+                tiles: [
+                    `${location.href.replace(
+                        "/index.html",
+                        ""
+                    )}/rail/{z}/{x}/{y}.pbf`,
+                ],
+                minzoom: 0,
+                maxzoom: 8,
+                attribution:
+                    '<a href="https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N02-v3_1.html" target="_blank">国土数値情報（令和4年鉄道データ）（国土交通省）</a>',
+            },
         },
         layers: [
             {
@@ -155,6 +188,18 @@ const map = new maplibregl.Map({
             {
                 id: "gsi-std-layer",
                 source: "gsi_std",
+                type: "raster",
+                layout: { visibility: "none" },
+            },
+            {
+                id: "gsi-pale-layer",
+                source: "gsi_pale",
+                type: "raster",
+                layout: { visibility: "none" },
+            },
+            {
+                id: "gsi-blank-layer",
+                source: "gsi_blank",
                 type: "raster",
                 layout: { visibility: "none" },
             },
@@ -260,6 +305,366 @@ const map = new maplibregl.Map({
                         4,
                     ],
                 },
+                layout: { visibility: "none" },
+            },
+            {
+                id: "rail-1-layer", // 新幹線
+                source: "rail",
+                "source-layer": "rail",
+                type: "line",
+                paint: {
+                    "line-width": [
+                        "interpolate",
+                        ["linear"],
+                        ["zoom"],
+                        10,
+                        3,
+                        14,
+                        7,
+                    ],
+                    "line-color": "green",
+                },
+                filter: ["==", "N02_002", "1"],
+                layout: { visibility: "none" },
+            },
+            {
+                id: "rail-2-layer", // JR在来線
+                source: "rail",
+                "source-layer": "rail",
+                type: "line",
+                paint: {
+                    "line-width": [
+                        "interpolate",
+                        ["linear"],
+                        ["zoom"],
+                        10,
+                        3,
+                        14,
+                        7,
+                    ],
+                    "line-color": "blue",
+                },
+                filter: ["==", "N02_002", "2"],
+                layout: { visibility: "none" },
+            },
+            {
+                id: "rail-3-layer", // 公営鉄道
+                source: "rail",
+                "source-layer": "rail",
+                type: "line",
+                paint: {
+                    "line-width": [
+                        "interpolate",
+                        ["linear"],
+                        ["zoom"],
+                        10,
+                        3,
+                        14,
+                        7,
+                    ],
+                    "line-color": "red",
+                },
+                filter: ["==", "N02_002", "3"],
+                layout: { visibility: "none" },
+            },
+            {
+                id: "rail-3-1-layer", // 都営浅草線
+                source: "rail",
+                "source-layer": "rail",
+                type: "line",
+                paint: {
+                    "line-width": [
+                        "interpolate",
+                        ["linear"],
+                        ["zoom"],
+                        10,
+                        3,
+                        14,
+                        7,
+                    ],
+                    "line-color": "#ef463c",
+                },
+                filter: ["==", "N02_003", "1号線浅草線"],
+                layout: { visibility: "none" },
+            },
+            {
+                id: "rail-3-6-layer", // 都営三田線
+                source: "rail",
+                "source-layer": "rail",
+                type: "line",
+                paint: {
+                    "line-width": [
+                        "interpolate",
+                        ["linear"],
+                        ["zoom"],
+                        10,
+                        3,
+                        14,
+                        7,
+                    ],
+                    "line-color": "#0072bc",
+                },
+                filter: ["==", "N02_003", "6号線三田線"],
+                layout: { visibility: "none" },
+            },
+            {
+                id: "rail-3-10-layer", // 都営新宿線
+                source: "rail",
+                "source-layer": "rail",
+                type: "line",
+                paint: {
+                    "line-width": [
+                        "interpolate",
+                        ["linear"],
+                        ["zoom"],
+                        10,
+                        3,
+                        14,
+                        7,
+                    ],
+                    "line-color": "#abba41",
+                },
+                filter: ["==", "N02_003", "10号線新宿線"],
+                layout: { visibility: "none" },
+            },
+            {
+                id: "rail-3-12-layer", // 都営大江戸線
+                source: "rail",
+                "source-layer": "rail",
+                type: "line",
+                paint: {
+                    "line-width": [
+                        "interpolate",
+                        ["linear"],
+                        ["zoom"],
+                        10,
+                        3,
+                        14,
+                        7,
+                    ],
+                    "line-color": "#ce1c64",
+                },
+                filter: ["==", "N02_003", "12号線大江戸線"],
+                layout: { visibility: "none" },
+            },
+            {
+                id: "rail-4-layer", // 民営鉄道
+                source: "rail",
+                "source-layer": "rail",
+                type: "line",
+                paint: {
+                    "line-width": [
+                        "interpolate",
+                        ["linear"],
+                        ["zoom"],
+                        10,
+                        3,
+                        14,
+                        7,
+                    ],
+                    "line-color": "orange",
+                },
+                filter: ["==", "N02_002", "4"],
+                layout: { visibility: "none" },
+            },
+            {
+                id: "rail-4-2-layer", // 東京メトロ日比谷線
+                source: "rail",
+                "source-layer": "rail",
+                type: "line",
+                paint: {
+                    "line-width": [
+                        "interpolate",
+                        ["linear"],
+                        ["zoom"],
+                        10,
+                        3,
+                        14,
+                        7,
+                    ],
+                    "line-color": "#b5b5ac",
+                },
+                filter: ["==", "N02_003", "2号線日比谷線"],
+                layout: { visibility: "none" },
+            },
+            {
+                id: "rail-4-3-layer", // 東京メトロ銀座線
+                source: "rail",
+                "source-layer": "rail",
+                type: "line",
+                paint: {
+                    "line-width": [
+                        "interpolate",
+                        ["linear"],
+                        ["zoom"],
+                        10,
+                        3,
+                        14,
+                        7,
+                    ],
+                    "line-color": "#ff9500",
+                },
+                filter: ["==", "N02_003", "3号線銀座線"],
+                layout: { visibility: "none" },
+            },
+            {
+                id: "rail-4-4-layer", // 東京メトロ丸ノ内線
+                source: "rail",
+                "source-layer": "rail",
+                type: "line",
+                paint: {
+                    "line-width": [
+                        "interpolate",
+                        ["linear"],
+                        ["zoom"],
+                        10,
+                        3,
+                        14,
+                        7,
+                    ],
+                    "line-color": "#f52e36",
+                },
+                filter: ["==", "N02_003", "4号線丸ノ内線"],
+                layout: { visibility: "none" },
+            },
+            {
+                id: "rail-4-5-layer", // 東京メトロ東西線
+                source: "rail",
+                "source-layer": "rail",
+                type: "line",
+                paint: {
+                    "line-width": [
+                        "interpolate",
+                        ["linear"],
+                        ["zoom"],
+                        10,
+                        3,
+                        14,
+                        7,
+                    ],
+                    "line-color": "#009bbf",
+                },
+                filter: ["==", "N02_003", "5号線東西線"],
+                layout: { visibility: "none" },
+            },
+            {
+                id: "rail-4-7-layer", // 東京メトロ南北線
+                source: "rail",
+                "source-layer": "rail",
+                type: "line",
+                paint: {
+                    "line-width": [
+                        "interpolate",
+                        ["linear"],
+                        ["zoom"],
+                        10,
+                        3,
+                        14,
+                        7,
+                    ],
+                    "line-color": "#00ac9b",
+                },
+                filter: ["==", "N02_003", "7号線南北線"],
+                layout: { visibility: "none" },
+            },
+            {
+                id: "rail-4-8-layer", // 東京メトロ有楽町線
+                source: "rail",
+                "source-layer": "rail",
+                type: "line",
+                paint: {
+                    "line-width": [
+                        "interpolate",
+                        ["linear"],
+                        ["zoom"],
+                        10,
+                        3,
+                        14,
+                        7,
+                    ],
+                    "line-color": "#c1a470",
+                },
+                filter: ["==", "N02_003", "8号線有楽町線"],
+                layout: { visibility: "none" },
+            },
+            {
+                id: "rail-4-9-layer", // 東京メトロ千代田線
+                source: "rail",
+                "source-layer": "rail",
+                type: "line",
+                paint: {
+                    "line-width": [
+                        "interpolate",
+                        ["linear"],
+                        ["zoom"],
+                        10,
+                        3,
+                        14,
+                        7,
+                    ],
+                    "line-color": "#00bb85",
+                },
+                filter: ["==", "N02_003", "9号線千代田線"],
+                layout: { visibility: "none" },
+            },
+            {
+                id: "rail-4-11-layer", // 東京メトロ半蔵門線
+                source: "rail",
+                "source-layer": "rail",
+                type: "line",
+                paint: {
+                    "line-width": [
+                        "interpolate",
+                        ["linear"],
+                        ["zoom"],
+                        10,
+                        3,
+                        14,
+                        7,
+                    ],
+                    "line-color": "#867fdf",
+                },
+                filter: ["==", "N02_003", "11号線半蔵門線"],
+                layout: { visibility: "none" },
+            },
+            {
+                id: "rail-4-13-layer", // 東京メトロ副都心線
+                source: "rail",
+                "source-layer": "rail",
+                type: "line",
+                paint: {
+                    "line-width": [
+                        "interpolate",
+                        ["linear"],
+                        ["zoom"],
+                        10,
+                        3,
+                        14,
+                        7,
+                    ],
+                    "line-color": "#9c5e31",
+                },
+                filter: ["==", "N02_003", "13号線副都心線"],
+                layout: { visibility: "none" },
+            },
+            {
+                id: "rail-5-layer", // 第3セクター
+                source: "rail",
+                "source-layer": "rail",
+                type: "line",
+                paint: {
+                    "line-width": [
+                        "interpolate",
+                        ["linear"],
+                        ["zoom"],
+                        10,
+                        3,
+                        14,
+                        7,
+                    ],
+                    "line-color": "purple",
+                },
+                filter: ["==", "N02_002", "5"],
                 layout: { visibility: "none" },
             },
             {
@@ -485,18 +890,32 @@ map.on("load", () => {
         baseLayers: {
             "osm-layer": "OpenStreetMap",
             "gsi-std-layer": "地理院タイル標準",
+            "gsi-pale-layer": "地理院タイル淡色",
+            "gsi-blank-layer": "地理院タイル白地図",
         },
         overLayers: {
             hillshade: "陰影図",
             "admin-layer": "行政区域ポリゴン",
             "admin-outline-layer": "行政区域ライン",
             "population-layer": "人口集中地区",
-            "hazard_flood-layer": "洪水浸水想定区域",
-            "hazard_hightide-layer": "高潮浸水想定区域",
-            "hazard_tsunami-layer": "津波浸水想定区域",
-            "hazard_doseki-layer": "土石流警戒区域",
-            "hazard_kyukeisha-layer": "急傾斜警戒区域",
-            "hazard_jisuberi-layer": "地滑り警戒区域",
+            "rail-1-layer": "新幹線",
+            "rail-2-layer": "JR在来線",
+            "rail-3-layer": "公営鉄道",
+            "rail-3-1-layer": "都営浅草線",
+            "rail-3-6-layer": "都営三田線",
+            "rail-3-10-layer": "都営新宿線",
+            "rail-3-12-layer": "都営大江戸線",
+            "rail-4-layer": "民営鉄道",
+            "rail-4-2-layer": "東京メトロ日比谷線",
+            "rail-4-3-layer": "東京メトロ銀座線",
+            "rail-4-4-layer": "東京メトロ丸ノ内線",
+            "rail-4-5-layer": "東京メトロ東西線",
+            "rail-4-7-layer": "東京メトロ南北線",
+            "rail-4-8-layer": "東京メトロ有楽町線",
+            "rail-4-9-layer": "東京メトロ千代田線",
+            "rail-4-11-layer": "東京メトロ半蔵門線",
+            "rail-4-13-layer": "東京メトロ副都心線",
+            "rail-5-layer": "第3セクター",
         },
     });
     map.addControl(opacity, "top-left");
@@ -504,6 +923,12 @@ map.on("load", () => {
     // 指定緊急避難場所のレイヤコントロール追加
     const opacitySkhb = new OpacityControl({
         overLayers: {
+            "hazard_flood-layer": "洪水浸水想定区域",
+            "hazard_hightide-layer": "高潮浸水想定区域",
+            "hazard_tsunami-layer": "津波浸水想定区域",
+            "hazard_doseki-layer": "土石流警戒区域",
+            "hazard_kyukeisha-layer": "急傾斜警戒区域",
+            "hazard_jisuberi-layer": "地滑り警戒区域",
             "skhb-1-layer": "洪水",
             "skhb-2-layer": "崖崩れ/土石流/地滑り",
             "skhb-3-layer": "高潮",
@@ -608,7 +1033,44 @@ map.on("load", () => {
             .addTo(map);
     });
 
-    // 指定緊急避難場所をマウスオーバーしたときにカーソルの形状を変更
+    // 鉄道の路線名ポップアップ表示
+    map.on("click", (e) => {
+        const features = map.queryRenderedFeatures(e.point, {
+            layers: [
+                "rail-1-layer",
+                "rail-2-layer",
+                "rail-3-layer",
+                "rail-3-1-layer",
+                "rail-3-6-layer",
+                "rail-3-10-layer",
+                "rail-3-12-layer",
+                "rail-4-layer",
+                "rail-4-2-layer",
+                "rail-4-3-layer",
+                "rail-4-4-layer",
+                "rail-4-5-layer",
+                "rail-4-7-layer",
+                "rail-4-8-layer",
+                "rail-4-9-layer",
+                "rail-4-11-layer",
+                "rail-4-13-layer",
+                "rail-5-layer",
+            ],
+        });
+        if (features.length === 0) return;
+
+        const feature = features[0];
+        const popup = new maplibregl.Popup()
+            .setLngLat(e.lngLat)
+            .setHTML(
+                `\
+                    <div>${feature.properties.N02_004}: ${feature.properties.N02_003}</div>
+                `
+            )
+            .addTo(map);
+    });
+
+    // レイヤ地物にマウスオーバーしたときにカーソルの形状を変更
     map.on("mousemove", (e) => {
         const features = map.queryRenderedFeatures(e.point, {
             layers: [
@@ -620,6 +1082,25 @@ map.on("load", () => {
                 "skhb-6-layer",
                 "skhb-7-layer",
                 "skhb-8-layer",
+                "admin-layer",
+                "rail-1-layer",
+                "rail-2-layer",
+                "rail-3-layer",
+                "rail-3-1-layer",
+                "rail-3-6-layer",
+                "rail-3-10-layer",
+                "rail-3-12-layer",
+                "rail-4-layer",
+                "rail-4-2-layer",
+                "rail-4-3-layer",
+                "rail-4-4-layer",
+                "rail-4-5-layer",
+                "rail-4-7-layer",
+                "rail-4-8-layer",
+                "rail-4-9-layer",
+                "rail-4-11-layer",
+                "rail-4-13-layer",
+                "rail-5-layer",
             ],
         });
         if (features.length > 0) {
