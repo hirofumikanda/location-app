@@ -926,33 +926,38 @@ map.on("load", () => {
             "gsi-pale-layer": "地理院タイル淡色",
             "gsi-blank-layer": "地理院タイル白地図",
         },
+    });
+    map.addControl(opacity, "top-left");
+
+    // レイヤコントロール
+    const opacityOverlay = new OpacityControl({
         overLayers: {
             hillshade: "陰影図",
-            "admin-layer": "行政区域ポリゴン",
-            "admin-outline-layer": "行政区域ライン",
+            // "admin-layer": "行政区域ポリゴン",
+            // "admin-outline-layer": "行政区域ライン",
             "population-layer": "人口集中地区",
             "station-circle-layer": "駅",
             "rail-1-layer": "新幹線",
             "rail-2-layer": "JR在来線",
             "rail-3-layer": "公営鉄道",
-            "rail-3-1-layer": "都営浅草線",
-            "rail-3-6-layer": "都営三田線",
-            "rail-3-10-layer": "都営新宿線",
-            "rail-3-12-layer": "都営大江戸線",
+            // "rail-3-1-layer": "都営浅草線",
+            // "rail-3-6-layer": "都営三田線",
+            // "rail-3-10-layer": "都営新宿線",
+            // "rail-3-12-layer": "都営大江戸線",
             "rail-4-layer": "民営鉄道",
-            "rail-4-2-layer": "東京メトロ日比谷線",
-            "rail-4-3-layer": "東京メトロ銀座線",
-            "rail-4-4-layer": "東京メトロ丸ノ内線",
-            "rail-4-5-layer": "東京メトロ東西線",
-            "rail-4-7-layer": "東京メトロ南北線",
-            "rail-4-8-layer": "東京メトロ有楽町線",
-            "rail-4-9-layer": "東京メトロ千代田線",
-            "rail-4-11-layer": "東京メトロ半蔵門線",
-            "rail-4-13-layer": "東京メトロ副都心線",
+            // "rail-4-2-layer": "東京メトロ日比谷線",
+            // "rail-4-3-layer": "東京メトロ銀座線",
+            // "rail-4-4-layer": "東京メトロ丸ノ内線",
+            // "rail-4-5-layer": "東京メトロ東西線",
+            // "rail-4-7-layer": "東京メトロ南北線",
+            // "rail-4-8-layer": "東京メトロ有楽町線",
+            // "rail-4-9-layer": "東京メトロ千代田線",
+            // "rail-4-11-layer": "東京メトロ半蔵門線",
+            // "rail-4-13-layer": "東京メトロ副都心線",
             "rail-5-layer": "第3セクター",
         },
     });
-    map.addControl(opacity, "top-left");
+    map.addControl(opacityOverlay, "top-right");
 
     // 指定緊急避難場所のレイヤコントロール追加
     // const opacitySkhb = new OpacityControl({
