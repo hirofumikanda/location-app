@@ -178,6 +178,19 @@ const map = new maplibregl.Map({
                 attribution:
                     '<a href="https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N02-v3_1.html" target="_blank">国土数値情報（令和4年鉄道データ）（国土交通省）</a>',
             },
+            station: {
+                type: "vector",
+                tiles: [
+                    `${location.href.replace(
+                        "/index.html",
+                        ""
+                    )}/station/{z}/{x}/{y}.pbf`,
+                ],
+                minzoom: 0,
+                maxzoom: 8,
+                attribution:
+                    '<a href="https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N02-v3_1.html" target="_blank">国土数値情報（令和4年鉄道データ）（国土交通省）</a>',
+            },
         },
         layers: [
             {
@@ -303,6 +316,26 @@ const map = new maplibregl.Map({
                         1,
                         14,
                         4,
+                    ],
+                },
+                layout: { visibility: "none" },
+            },
+            {
+                id: "station-circle-layer",
+                source: "station",
+                "source-layer": "station",
+                type: "circle",
+                paint: {
+                    "circle-color": "orange",
+                    "circle-stroke-width": 1,
+                    "circle-radius": [
+                        "interpolate",
+                        ["linear"],
+                        ["zoom"],
+                        10,
+                        1,
+                        15,
+                        6,
                     ],
                 },
                 layout: { visibility: "none" },
@@ -898,6 +931,7 @@ map.on("load", () => {
             "admin-layer": "行政区域ポリゴン",
             "admin-outline-layer": "行政区域ライン",
             "population-layer": "人口集中地区",
+            "station-circle-layer": "駅",
             "rail-1-layer": "新幹線",
             "rail-2-layer": "JR在来線",
             "rail-3-layer": "公営鉄道",
@@ -1070,6 +1104,24 @@ map.on("load", () => {
             .addTo(map);
     });
 
+    // 駅名ポップアップ表示
+    map.on("click", (e) => {
+        const features = map.queryRenderedFeatures(e.point, {
+            layers: ["station-circle-layer"],
+        });
+        if (features.length === 0) return;
+
+        const feature = features[0];
+        const popup = new maplibregl.Popup()
+            .setLngLat(e.lngLat)
+            .setHTML(
+                `\
+                    <div>${feature.properties.N02_005}駅</div>
+                `
+            )
+            .addTo(map);
+    });
+
     // レイヤ地物にマウスオーバーしたときにカーソルの形状を変更
     map.on("mousemove", (e) => {
         const features = map.queryRenderedFeatures(e.point, {
@@ -1083,6 +1135,7 @@ map.on("load", () => {
                 "skhb-7-layer",
                 "skhb-8-layer",
                 "admin-layer",
+                "station-circle-layer",
                 "rail-1-layer",
                 "rail-2-layer",
                 "rail-3-layer",
