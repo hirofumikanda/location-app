@@ -3,6 +3,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import OpacityControl from "maplibre-gl-opacity";
 import "maplibre-gl-opacity/dist/maplibre-gl-opacity.css";
 import distance from "@turf/distance";
+import { useGsiTerrainSource } from "maplibre-gl-gsi-terrain";
 
 const map = new maplibregl.Map({
     container: "map",
@@ -503,6 +504,32 @@ map.on("load", () => {
             features: [routeFeature],
         });
     });
+
+    // 地理院標高タイル（terrainRGB形式）のソース追加
+    const gsiTerrainSource = useGsiTerrainSource(maplibregl.addProtocol);
+    map.addSource("terrain", gsiTerrainSource);
+
+    // 陰影図レイヤ追加
+    map.addLayer(
+        {
+            id: "hillshade",
+            source: "terrain",
+            type: "hillshade",
+            paint: {
+                "hillshade-illumination-anchor": "map",
+                "hillshade-exaggeration": 0.2,
+            },
+        },
+        "hazard_jisuberi-layer"
+    );
+
+    // 3D地形
+    map.addControl(
+        new maplibregl.TerrainControl({
+            source: "terrain",
+            exaggeration: 1,
+        })
+    );
 });
 
 /**
