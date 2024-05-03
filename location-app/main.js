@@ -132,6 +132,19 @@ const map = new maplibregl.Map({
                 attribution:
                     '<a href="https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-A16-v2_3.html" target="_blank">国土数値情報（平成27年人口集中地区データ）（国土交通省）</a>',
             },
+            admin: {
+                type: "vector",
+                tiles: [
+                    `${location.href.replace(
+                        "/index.html",
+                        ""
+                    )}/adminarea/{z}/{x}/{y}.pbf`,
+                ],
+                minzoom: 0,
+                maxzoom: 8,
+                attribution:
+                    '<a href="https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-v3_0.html" target="_blank">国土数値情報（令和3年行政区域データ）（国土交通省）</a>',
+            },
         },
         layers: [
             {
@@ -207,6 +220,44 @@ const map = new maplibregl.Map({
                                 40000,
                             ],
                         ],
+                    ],
+                },
+                layout: { visibility: "none" },
+            },
+            {
+                id: "admin-layer",
+                source: "admin",
+                "source-layer": "admin",
+                type: "fill",
+                paint: {
+                    "fill-color": "#6a3",
+                    "fill-opacity": [
+                        "interpolate",
+                        ["linear"],
+                        ["zoom"],
+                        10,
+                        0.5,
+                        14,
+                        0.2,
+                    ],
+                },
+                layout: { visibility: "none" },
+            },
+            {
+                id: "admin-outline-layer",
+                source: "admin",
+                "source-layer": "admin",
+                type: "line",
+                paint: {
+                    "line-color": "#373",
+                    "line-width": [
+                        "interpolate",
+                        ["linear"],
+                        ["zoom"],
+                        10,
+                        1,
+                        14,
+                        4,
                     ],
                 },
                 layout: { visibility: "none" },
@@ -437,6 +488,8 @@ map.on("load", () => {
         },
         overLayers: {
             hillshade: "陰影図",
+            "admin-layer": "行政区域ポリゴン",
+            "admin-outline-layer": "行政区域ライン",
             "population-layer": "人口集中地区",
             "hazard_flood-layer": "洪水浸水想定区域",
             "hazard_hightide-layer": "高潮浸水想定区域",
@@ -532,6 +585,24 @@ map.on("load", () => {
                         }> 火山現象</span>\
                         </div>,
 
+                `
+            )
+            .addTo(map);
+    });
+
+    // 行政名のポップアップ表示
+    map.on("click", (e) => {
+        const features = map.queryRenderedFeatures(e.point, {
+            layers: ["admin-layer"],
+        });
+        if (features.length === 0) return;
+
+        const feature = features[0];
+        const popup = new maplibregl.Popup()
+            .setLngLat(e.lngLat)
+            .setHTML(
+                `\
+                    <div>${feature.properties.N03_007}: ${feature.properties.N03_001}${feature.properties.N03_004}</div>
                 `
             )
             .addTo(map);
