@@ -23,6 +23,16 @@ const map = new maplibregl.Map({
                 attribution:
                     '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> cotributors',
             },
+            gsi_std: {
+                type: "raster",
+                tiles: [
+                    "https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png",
+                ],
+                maxzoom: 18,
+                tileSize: 256,
+                attribution:
+                    '<a href="https://maps.gsi.go.jp/development/ichiran.html">地理院タイル</a>',
+            },
             hazard_flood: {
                 type: "raster",
                 tiles: [
@@ -115,6 +125,12 @@ const map = new maplibregl.Map({
                 id: "osm-layer",
                 source: "osm",
                 type: "raster",
+            },
+            {
+                id: "gsi-std-layer",
+                source: "gsi_std",
+                type: "raster",
+                layout: { visibility: "none" },
             },
             {
                 id: "hazard_flood-layer",
@@ -348,8 +364,41 @@ const map = new maplibregl.Map({
 });
 
 map.on("load", () => {
+    // 地理院標高タイル（terrainRGB形式）のソース追加
+    const gsiTerrainSource = useGsiTerrainSource(maplibregl.addProtocol);
+    map.addSource("terrain", gsiTerrainSource);
+
+    // 陰影図レイヤ追加
+    map.addLayer(
+        {
+            id: "hillshade",
+            source: "terrain",
+            type: "hillshade",
+            paint: {
+                "hillshade-illumination-anchor": "map",
+                "hillshade-exaggeration": 0.2,
+            },
+            layout: { visibility: "none" },
+        },
+        "hazard_jisuberi-layer"
+    );
+
+    // 3D地形
+    map.addControl(
+        new maplibregl.TerrainControl({
+            source: "terrain",
+            exaggeration: 1,
+        }),
+        "bottom-right"
+    );
+
     const opacity = new OpacityControl({
         baseLayers: {
+            "osm-layer": "OpenStreetMap",
+            "gsi-std-layer": "地理院タイル標準",
+        },
+        overLayers: {
+            hillshade: "陰影図",
             "hazard_flood-layer": "洪水浸水想定区域",
             "hazard_hightide-layer": "高潮浸水想定区域",
             "hazard_tsunami-layer": "津波浸水想定区域",
@@ -360,8 +409,9 @@ map.on("load", () => {
     });
     map.addControl(opacity, "top-left");
 
+    // 指定緊急避難場所のレイヤコントロール追加
     const opacitySkhb = new OpacityControl({
-        baseLayers: {
+        overLayers: {
             "skhb-1-layer": "洪水",
             "skhb-2-layer": "崖崩れ/土石流/地滑り",
             "skhb-3-layer": "高潮",
@@ -374,6 +424,7 @@ map.on("load", () => {
     });
     map.addControl(opacitySkhb, "top-right");
 
+    // 指定緊急避難場所のポップアップ表示
     map.on("click", (e) => {
         const features = map.queryRenderedFeatures(e.point, {
             layers: [
@@ -446,6 +497,8 @@ map.on("load", () => {
             )
             .addTo(map);
     });
+
+    // 指定緊急避難場所をマウスオーバーしたときにカーソルの形状を変更
     map.on("mousemove", (e) => {
         const features = map.queryRenderedFeatures(e.point, {
             layers: [
@@ -466,8 +519,8 @@ map.on("load", () => {
         }
     });
 
+    // 現在地を表示
     let userlocation = null;
-
     const geolocationControl = new maplibregl.GeolocateControl({
         trackUserLocation: true,
     });
@@ -476,6 +529,7 @@ map.on("load", () => {
         userlocation = [e.coords.longitude, e.coords.latitude];
     });
 
+    // 最寄りの指定緊急避難場所と現在地のラインを表示
     map.on("render", () => {
         if (geolocationControl._watchState === "OFF") userlocation = null;
         if (map.getZoom() < 7 || userlocation === null) {
@@ -504,32 +558,6 @@ map.on("load", () => {
             features: [routeFeature],
         });
     });
-
-    // 地理院標高タイル（terrainRGB形式）のソース追加
-    const gsiTerrainSource = useGsiTerrainSource(maplibregl.addProtocol);
-    map.addSource("terrain", gsiTerrainSource);
-
-    // 陰影図レイヤ追加
-    map.addLayer(
-        {
-            id: "hillshade",
-            source: "terrain",
-            type: "hillshade",
-            paint: {
-                "hillshade-illumination-anchor": "map",
-                "hillshade-exaggeration": 0.2,
-            },
-        },
-        "hazard_jisuberi-layer"
-    );
-
-    // 3D地形
-    map.addControl(
-        new maplibregl.TerrainControl({
-            source: "terrain",
-            exaggeration: 1,
-        })
-    );
 });
 
 /**
